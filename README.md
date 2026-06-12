@@ -1,0 +1,1 @@
+# Gerador_de_grafico_transformada_Z
