@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise de Estabilidade - Atuador Piezelétrico</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <h2>Parâmetros do Sistema</h2>
+            <form id="params-form">
+                <div class="input-group"><label>L (H):</label><input type="number" id="L" step="any" value="0.1"></div>
+                <div class="input-group"><label>R (Ω):</label><input type="number" id="R" step="any" value="10.0"></div>
+                <div class="input-group"><label>C (F):</label><input type="number" id="C" step="any" value="0.0001"></div>
+                <div class="input-group"><label>M1 (kg):</label><input type="number" id="M1" step="any" value="0.5"></div>
+                <div class="input-group"><label>B1 (Ns/m):</label><input type="number" id="B1" step="any" value="5.0"></div>
+                <div class="input-group"><label>K1 (N/m):</label><input type="number" id="K1" step="any" value="2000.0"></div>
+                <div class="input-group"><label>Vf (m⁵/N):</label><input type="number" id="Vf" step="any" value="0.02"></div>
+                <div class="input-group"><label>Rh (Ns/m⁵):</label><input type="number" id="Rh" step="any" value="1.5"></div>
+                <div class="input-group"><label>Tem (N/V):</label><input type="number" id="Tem" step="any" value="2.0"></div>
+                <div class="input-group"><label>Área (m²):</label><input type="number" id="A" step="any" value="0.1"></div>
+                <div class="input-group"><label>T (Seg):</label><input type="number" id="T" step="any" value="0.001"></div>
+                
+                <button type="submit" id="btn-calcular">Calcular Plano Z</button>
+            </form>
+        </aside>
+
+        <main class="content">
+            <header>
+                <h1>Mapeamento Z: Polos e Zeros</h1>
+                <p>Parte II: Recurso Computacional</p>
+            </header>
+            
+            <div class="status-panel">
+                <div class="status-card">
+                    <h3>Causalidade</h3>
+                    <p id="txt-causalidade">Aguardando...</p>
+                </div>
+                <div class="status-card">
+                    <h3>Estabilidade</h3>
+                    <p id="txt-estabilidade">Aguardando...</p>
+                </div>
+            </div>
+
+            <div class="plot-wrapper">
+                <div id="grafico-z"></div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
