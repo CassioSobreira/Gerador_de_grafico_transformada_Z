@@ -1,7 +1,7 @@
 document.getElementById('params-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    // Feedback visual de carregamento
+    //visual de carregamento
     document.getElementById('btn-calcular').innerText = "Calculando...";
 
     // 1. Coletar os dados dos inputs
@@ -20,7 +20,7 @@ document.getElementById('params-form').addEventListener('submit', async (e) => {
     };
 
     try {
-        // 2. Enviar para a API Python no Vercel
+        
         const response = await fetch('/api/calcular', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -55,6 +55,31 @@ document.getElementById('params-form').addEventListener('submit', async (e) => {
             estabEl.style.color = "#e74c3c";
         }
 
+       
+        const tbody = document.getElementById('tabela-corpo');
+        tbody.innerHTML = ""; 
+
+        // Função auxiliar para criar as linhas formatadas
+        const criarLinha = (tipo, real, imag) => {
+            const mag = Math.sqrt(real * real + imag * imag);
+            const tr = document.createElement('tr');
+            const classeCor = tipo === 'Polo' ? 'tag-polo' : 'tag-zero';
+            
+            // Formata os números para terem no máximo 5 casas decimais
+            tr.innerHTML = `
+                <td class="${classeCor}">${tipo}</td>
+                <td>${real.toFixed(5)}</td>
+                <td>${imag.toFixed(5)} j</td>
+                <td><strong>${mag.toFixed(5)}</strong></td>
+            `;
+            tbody.appendChild(tr);
+        };
+
+        // Popula a tabela primeiro com os Polos, depois com os Zeros
+        polos.forEach(p => criarLinha('Polo', p.real, p.imag));
+        zeros.forEach(z => criarLinha('Zero', z.real, z.imag));
+        // ==========================================
+
         // 4. Plotar o Gráfico com Plotly
         desenharGraficoZ(polos, zeros, maxMagnitude);
 
@@ -67,7 +92,6 @@ document.getElementById('params-form').addEventListener('submit', async (e) => {
 });
 
 function desenharGraficoZ(polos, zeros, maxMagnitude) {
-    // Definir os limites do gráfico (um pouco maior que o maior polo ou pelo menos 1.5)
     const rangeLimit = Math.max(1.5, maxMagnitude + 0.5);
 
     // Preparar dados do Círculo Unitário
@@ -111,12 +135,39 @@ function desenharGraficoZ(polos, zeros, maxMagnitude) {
     };
 
     const layout = {
-        title: 'Plano Z e Região de Convergência',
+        title: 'Plano Z e Região de Convergência (RDC)',
         xaxis: { title: 'Eixo Real', range: [-rangeLimit, rangeLimit], zeroline: true, zerolinecolor: 'black' },
         yaxis: { title: 'Eixo Imaginário', range: [-rangeLimit, rangeLimit], zeroline: true, zerolinecolor: 'black', scaleanchor: "x", scaleratio: 1 },
-        plot_bgcolor: '#f8f9fa',
+        plot_bgcolor: '#ffffff', // Fundo branco para a RDC funcionar
         margin: { t: 50, l: 50, r: 50, b: 50 },
-        showlegend: true
+        showlegend: true,
+        
+        shapes: [
+            
+            {
+                type: 'rect', xref: 'x', yref: 'y',
+                x0: -20, y0: -20, x1: 20, y1: 20,
+                fillcolor: 'rgba(46, 204, 113, 0.1)', // Verde transparente
+                line: {width: 0}, layer: 'below'
+            },
+            
+            {
+                type: 'circle', xref: 'x', yref: 'y',
+                x0: -maxMagnitude, y0: -maxMagnitude,
+                x1: maxMagnitude, y1: maxMagnitude,
+                fillcolor: '#ffffff', // Branco sólido
+                line: { color: '#27ae60', width: 2, dash: 'dot' }, // Borda da RDC
+                layer: 'below'
+            }
+        ],
+        annotations: [
+            {
+                x: maxMagnitude + 0.1, y: maxMagnitude + 0.1,
+                xref: 'x', yref: 'y',
+                text: 'RDC: |z| > ' + maxMagnitude.toFixed(2),
+                showarrow: false, font: {color: '#27ae60', size: 12}
+            }
+        ]
     };
 
     Plotly.newPlot('grafico-z', [traceCircle, traceZeros, tracePolos], layout, {responsive: true});

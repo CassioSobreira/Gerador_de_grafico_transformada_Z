@@ -2,11 +2,9 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import numpy as np
 
-# O Vercel procura exatamente por esta variável 'app' (o padrão WSGI)
 app = Flask(__name__)
-CORS(app) # Libera a conexão do seu site com a API de cálculos
+CORS(app) 
 
-# A rota espelha o nome da pasta e do arquivo
 @app.route('/api/calcular', methods=['POST'])
 def calcular_polos():
     data = request.get_json()
